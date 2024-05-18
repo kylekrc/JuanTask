@@ -2,7 +2,7 @@ import { AuthButtons } from './AuthButtons';
 
 export const Hero = () => {
   return (
-    <div>
+    <div className='mt-20'>
       <div className="relative isolate px-6 lg:px-8">
         <div
           className="absolute inset-x-0 -z-10 transform-gpu overflow-hidden blur-3xl "
@@ -18,10 +18,10 @@ export const Hero = () => {
         </div>
         <div className="mx-auto max-w-2xl lg:py-16">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-100 sm:text-6xl">
+            <h1 className="text-4xl font-mono tracking-tight text-gray-100 sm:text-8xl">
               JuanTask
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-300">
+            <p className="mt-6 font-thin text-xl leading-8 text-gray-300">
               Get the task done, Juan at a time!
             </p>
 
