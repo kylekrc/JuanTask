@@ -94,7 +94,7 @@ export default async function Signup({
             placeholder="••••••••"
             required
           />
-          <button className="bg-indigo-700 rounded-md px-4 py-2 text-foreground mb-2">
+          <button className="bg-green-700 text-white hover:bg-green-400 hover:text-black transition-all duration-200 ease-out rounded-md px-4 py-2 text-foreground mb-2">
             Sign up
           </button>
 

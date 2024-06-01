@@ -15,7 +15,7 @@ export default async function User() {
     await supabase.auth.signOut();
     return redirect('/login');
   };
-
+ 
   return (
     session && (
       <div className="flex items-center gap-4">
