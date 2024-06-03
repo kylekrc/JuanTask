@@ -7,7 +7,6 @@ export default async function Header() {
       <div className='flex w-[20%] sm:w-[4%]'>
         <img src="JT.png" alt="" />
       </div>
-      <User />
     </div>
   );
 }
