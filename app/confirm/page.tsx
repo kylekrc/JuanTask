@@ -1,3 +1,4 @@
+'use client';
 import Header from '@/components/Header/Header';
 
 export default function Signup({
@@ -10,7 +11,7 @@ export default function Signup({
       <Header />
 
       <div className="w-full px-8 sm:max-w-lg mx-auto mt-8">
-        <p className="text-foreground">{searchParams.message}</p>
+        {/* <p className="text-foreground">{searchParams.message}</p> */}
       </div>
     </div>
   );

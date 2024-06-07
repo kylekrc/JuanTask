@@ -1,41 +1,27 @@
-import Header from '@/components/Header/Header';
-import { createClient } from '@/utils/supabase/server';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+'use client'
+import Header from "@/components/Header/Header";
+import { signIn } from "../../functions/signin";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
-export default async function Login({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
+export default function Login({searchParams,}: {searchParams: { message: string };}) {
+  const router = useRouter();
   const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (session) {
-    return redirect('/dashboard');
-  }
-
-  const signIn = async (formData: FormData) => {
-    'use server';
-
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return redirect(`/login?message=${error.message}`);
-    }
-
-    return redirect('/dashboard');
+  // Check if user is logged in
+  const getUserSession = async() => {
+    const {data: { session },} = await supabase.auth.getSession();
+    if(session){
+      router.push('/user');
+    };
   };
+  
+  // Run once on component load
+  useEffect(() => {
+    getUserSession();
+  },[]);
 
   return (
     <div className='flex flex-col'>
@@ -83,11 +69,11 @@ export default async function Login({
                   Home
                 </Link>
 
-                {searchParams?.message && (
+                {/* {searchParams?.message && (
                   <p className="mt-4 p-4 bg-foreground/10 text-foreground rounded-md   text-center">
                     {searchParams.message}
                   </p>
-                )}
+                )} */}
               </form>
 
               <Link

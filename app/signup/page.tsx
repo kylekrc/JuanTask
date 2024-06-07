@@ -1,53 +1,28 @@
+'use client';
 import Link from 'next/link';
-import { headers } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
+import { redirect, useRouter } from 'next/navigation';
 import Header from '@/components/Header/Header';
+import { useEffect } from 'react';
+import { signUp } from '../../functions/signup';
 
-export default async function Signup({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
+export default function Signup({searchParams,}: {searchParams: { message: string };}) {
+  const router = useRouter();
   const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // Check if user is logged in
+  const getUserSession = async() => {
+    const {data: { session },} = await supabase.auth.getSession();
+    if (session) {
+            router.push('/user')
+        };
+    };
+  
+    // Run once on component load
+    useEffect(() => {
+        getUserSession();
+    },[])
 
-  if (session) {
-    return redirect('/');
-  }
-
-  const signUp = async (formData: FormData) => {
-    'use server';
-
-    const origin = headers().get('origin');
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const confirmPassword = formData.get('confirmPassword') as string;
-    const supabase = createClient();
-
-    if (password !== confirmPassword) {
-      return redirect('/signup?message=Passwords do not match');
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return redirect('/signup?message=Could not authenticate user');
-    }
-
-    return redirect(
-      `/confirm?message=Check email(${email}) to continue sign in process`
-    );
-  };
 
   return (
     <div>
@@ -98,11 +73,11 @@ export default async function Signup({
             Sign up
           </button>
 
-          {searchParams?.message && (
+          {/* {searchParams?.message && (
             <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
               {searchParams.message}
             </p>
-          )}
+          )} */}
         </form>
 
         <Link

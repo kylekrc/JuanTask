@@ -1,57 +1,27 @@
+'use client';
 import Header from '@/components/Header/Header';
-import { createClient } from '@/utils/supabase/server';
+import { resetPassword } from '@/functions/resetpassword';
+import { createClient } from '@/utils/supabase/client';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export default async function ResetPassword({
-  searchParams,
-}: {
-  searchParams: { message: string; code: string };
-}) {
+export default function ResetPassword({searchParams,}: {searchParams: { message: string; code: string };}) {
+  const router = useRouter();
   const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (session) {
-    return redirect('/');
-  }
-
-  const resetPassword = async (formData: FormData) => {
-    'use server';
-
-    const password = formData.get('password') as string;
-    const supabase = createClient();
-
-    if (searchParams.code) {
-      const supabase = createClient();
-      const { error } = await supabase.auth.exchangeCodeForSession(
-        searchParams.code
-      );
-
-      if (error) {
-        return redirect(
-          `/reset-password?message=Unable to reset Password. Link expired!`
-        );
-      }
-    }
-
-    const { error } = await supabase.auth.updateUser({
-      password,
-    });
-
-    if (error) {
-      console.log(error);
-      return redirect(
-        `/reset-password?message=Unable to reset Password. Try again!`
-      );
-    }
-
-    redirect(
-      `/login?message=Your Password has been reset successfully. Sign in.`
-    );
+  // Check if user is logged in
+  const getUserSession = async() => {
+    const {data: { session },} = await supabase.auth.getSession();
+    if(session){
+      router.push('/user');
+    };
   };
+  
+  // Run once on component load
+  useEffect(() => {
+    getUserSession();
+  },[]);
 
   return (
     <div>
@@ -69,6 +39,7 @@ export default async function ResetPassword({
           className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground mb-4"
           action={resetPassword}
         >
+          {/* <input type="text" value={searchParams.code} className='hidden' name='code'/> */}
           <label className="text-md" htmlFor="password">
             New Password
           </label>
@@ -92,12 +63,6 @@ export default async function ResetPassword({
           <button className="bg-indigo-700 rounded-md px-4 py-2 text-foreground mb-2">
             Reset
           </button>
-
-          {searchParams?.message && (
-            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-              {searchParams.message}
-            </p>
-          )}
         </form>
       </div>
     </div>

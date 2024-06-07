@@ -1,3 +1,4 @@
+'use client';
 import { AuthButtons } from './AuthButtons';
 
 export const Hero = () => {

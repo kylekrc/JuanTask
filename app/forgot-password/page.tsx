@@ -1,43 +1,27 @@
+'use client';
 import Link from 'next/link';
-import { headers } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header/Header';
+import { confirmReset } from '../../functions/confirmreset';
+import { useEffect } from 'react';
 
-export default async function ForgotPassword({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
+export default function ForgotPassword({searchParams,}: {searchParams: { message: string };}) {
+  const router = useRouter();
   const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (session) {
-    return redirect('/');
-  }
-
-  const confirmReset = async (formData: FormData) => {
-    'use server';
-
-    const origin = headers().get('origin');
-    const email = formData.get('email') as string;
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${origin}/reset-password`,
-    });
-
-    if (error) {
-      return redirect('/forgot-password?message=Could not authenticate user');
-    }
-
-    return redirect(
-      '/confirm?message=Password Reset link has been sent to your email address'
-    );
-  };
+    // Check if user is logged in
+    const getUserSession = async() => {
+    const {data: { session },} = await supabase.auth.getSession();
+    if (session) {
+            router.push('/user');
+        };
+    };
+  
+    // Run once on component load
+    useEffect(() => {
+        getUserSession();
+    },[])
 
   return (
     <div>
@@ -69,11 +53,11 @@ export default async function ForgotPassword({
             Confirm
           </button>
 
-          {searchParams?.message && (
+          {/* {searchParams?.message && (
             <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
               {searchParams.message}
             </p>
-          )}
+          )} */}
         </form>
 
         <Link
