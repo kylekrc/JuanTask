@@ -1,20 +1,22 @@
 'use client';
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
 
 export const signIn = async (formData: FormData) => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const supabase = createClient();
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data:{session} } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      redirect(`/login?message=${error.message}`);
+    if(session){
+      redirect('/user');
     }
-
-    redirect('/user');
+    else{
+      toast.error('Invalid login credentials');
+    };
   };
