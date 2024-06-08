@@ -16,7 +16,7 @@ export default function Header() {
     getUserSession();
   },)
   return (
-    <div className='header px-5 py-3 h-[12%]'>
+    <div className='header px-5 py-3 h-[12%] max-h-[12%] min-h-[12%]'>
       <div className="flex justify-between w-full h-full">
         {sessionData && (
           <div className='flex justify-start w-[33%] sm:w-[4%]'>

@@ -5,12 +5,20 @@ import React, { useEffect, useState } from 'react'
 import { signOut } from '../../functions/signout';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar/Sidebar';
+import Dashboard from '@/components/User/Dashboard';
+import Employers from '@/components/User/Employers';
+
 
 export default function Page() {
     const router = useRouter();
     const supabase = createClient();
     const [sessionData, setSessionData] = useState<any>(null);
     const [mobileMode, setMobileMode] = useState<boolean>(true);
+
+    const [dashboard, setDashboard] = useState<boolean>(false);
+    const [employers, setEmployers] = useState<boolean>(false);
+    const [jobApplications, setJobApplications] = useState<boolean>(false);
+    const [home, setHome] = useState<boolean>(true);
 
     // Check if user is logged in
     const getUserSession = async() => {
@@ -48,6 +56,23 @@ export default function Page() {
         };
     },[])
 
+    // Check changes in state
+    useEffect(() => {
+        console.log(dashboard);
+    }, [dashboard])
+
+    useEffect(() => {
+        console.log(employers);
+    }, [employers])
+
+    useEffect(() => {
+        console.log(jobApplications);
+    }, [jobApplications])
+
+    useEffect(() => {
+        console.log(home);
+    }, [home])
+
   return (
     sessionData && (
         <>
@@ -73,21 +98,29 @@ export default function Page() {
                 {!mobileMode && (
                     <>
                     <div className='sm:flex sm:w-[15%] w-0'>
-                        <Sidebar/>
+                        <Sidebar setDashboard={setDashboard} setEmployers={setEmployers} setJobApplications={setJobApplications} setHome={setHome}/>
                     </div>
                     <div className='flex flex-col sm:w-[85%] w-full h-full'>
                         <Header/>
-                        <div className='flex justify-center p-2 w-full h-full'>
-                            <div className='flex flex-col items-center p-2 bg-white border-[2px] w-[90%] h-[50%] border-black rounded-md'>
-                                <h1 className='text-3xl text-center font-bold'>Welcome to JuanTask</h1>
-                                <h1>{sessionData.user.email}</h1>
-                                <form action={signOut} className='flex flex-col items-center p-2'>
-                                    <button className='py-2 px-3 text-center rounded-md bg-green-200 border-green-600 border-[2px]'>
-                                        Sign Out
-                                    </button>
-                                </form>
+                        {home && (
+                            <div className='flex justify-center p-2 w-full h-[90%]'>
+                                <div className='flex flex-col items-center p-2 bg-white border-[2px] w-[90%] h-[50%] border-black rounded-md'>
+                                    <h1 className='text-3xl text-center font-bold'>Welcome to JuanTask</h1>
+                                    <h1>{sessionData.user.email}</h1>
+                                    <form action={signOut} className='flex flex-col items-center p-2'>
+                                        <button className='py-2 px-3 text-center rounded-md bg-green-200 border-green-600 border-[2px]'>
+                                            Sign Out
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+                        )}
+                        {dashboard && (
+                            <Dashboard/>
+                        )}
+                        {employers && (
+                            <Employers/>
+                        )}
                     </div>
                     </>
                 )}
